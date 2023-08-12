@@ -3,6 +3,7 @@ import ArchmageSystem from "../systems/ArchmageSystem.mjs";
 import DnD5eSystem from "../systems/DND5eSystem.mjs";
 import PF2eSystem from "../systems/PF2eSystem.mjs";
 import SWADESystem from "../systems/SwadeSystem.mjs";
+import FabulaSystem from "../systems/FabulaSystem.mjs";
 
 export default class MMOHUD extends Application {
     static get defaultOptions() {
@@ -46,6 +47,9 @@ export default class MMOHUD extends Application {
                 break;
             case "swade":
                 this.systemConverter = new SWADESystem();
+                break;
+            case "fabulaultima":
+                this.systemConverter = new FabulaSystem();
                 break;
             default:
                 console.log(`MMO HUD | No specific system converter found for ${game.system.id}, using the Generic one.`);

@@ -21,7 +21,7 @@ export default class GenericSystem {
         // If a token exists, use that
         const activeTokens = actor.getActiveTokens();
         if ( activeTokens.length > 0 ) {
-            return activeTokens[0].document._actor.img;
+            return activeTokens[0].document.actor.img;
         }
 
         // Otherwise, use actor image
