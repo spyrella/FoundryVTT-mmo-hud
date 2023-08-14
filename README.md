@@ -19,6 +19,18 @@ The Enemy targeting (bottom middle) is populated with the following:
 
 ![](https://media.discordapp.net/attachments/830182194533892116/1063996189487398962/image.png)
 
+## Fabula Ultima System Support
+This fork's goal is to provide support for the Fabula Ultima system:
+* Fabula Ultima Boilerplate System
+- Partial Support (v10 only)
+- HP/MP shown
+- Semi-working Buff/Debuff Indicator
+
+* Custom System Builder (Fabula Templates via ![Here](https://github.com/warofexodus89/fabula_ultima_csb) )
+- TBA
+
+Note: This module does not have support for v11 of foundry, I'll see what I could do.
+
 ## Explicit System Support
 This should generally work on all systems, but it has explicit additional support for:
 * 13th Age
