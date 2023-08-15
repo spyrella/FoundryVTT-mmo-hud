@@ -1,7 +1,7 @@
 ![](https://img.shields.io/badge/Foundry-v10-informational)
 
 
-# MMO HUD: XIV
+# MMO HUD: XIV (Fabula Ultima Compatibility)
 
 A retro fantasy RPG-inspired Party HUD with Enemy health bars
 
