@@ -10,11 +10,13 @@ export default class MMOHUD extends Application {
         return foundry.utils.mergeObject(super.defaultOptions, {
             id: 'mmo-hud',
             template: 'modules/mmo-hud/templates/mmo-hud.html',
-            popOut: false,
-            minimizable: false,
+            popOut: true,
+            minimizable: true,
             resizable: false,
-            top: 0,
-            left: 0,
+            width: 555,
+            height: 345,
+            left: 130,
+            top: 115,
             classes: ['mmo-hud']
         });
     }
@@ -49,6 +51,9 @@ export default class MMOHUD extends Application {
                 this.systemConverter = new SWADESystem();
                 break;
             case "fabulaultima":
+                this.systemConverter = new FabulaSystem();
+                break;
+            case "projectfu":
                 this.systemConverter = new FabulaSystem();
                 break;
             default:

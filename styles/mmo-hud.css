@@ -1,8 +1,14 @@
+#mmo-hud .window-app .window-content,
+#mmo-hud .window-content {
+  background: transparent;
+}
+
+
 #mmo-hud-party {
   position: absolute;
-  top: 65px;
-  left: 115px;
-  width: 550px;
+  top: 30px;
+  left: 0px;
+  width: 555px;
   text-align: left;
 }
 #mmo-hud-party > h1 {
@@ -137,4 +143,5 @@
 [class*="rpg-"] a::after {
   z-index: 200;
 }
+
 /*# sourceMappingURL=mmo-hud.css.map */
