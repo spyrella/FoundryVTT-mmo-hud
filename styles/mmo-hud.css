@@ -1,3 +1,24 @@
+#mmo-hud .window-app .window-content,
+#mmo-hud .window-content {
+  background: transparent !important;
+  background-position: -43px -120px;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  overflow-y: auto;
+  padding: 0px 7px 3px 7px;
+  margin: 0px;
+  box-shadow: 0px 0px 20px black inset;
+  height: fit-content;
+  max-height: none;
+  color: #d6d6d6;
+}
+
+#mmo-hud .window-app .window-header,
+#mmo-hud .window-header {
+  background: transparent !important;
+}
+
 #mmo-hud-party {
   position: absolute;
   top: 65px;
@@ -5,19 +26,23 @@
   width: 550px;
   text-align: left;
 }
+
 #mmo-hud-party > h1 {
   color: #cebda0;
 }
+
 #mmo-hud-party.small {
   scale: 80%;
-  top: 40px;
-  left: 65px;
+  top: 0;
+  left: -55px;
 }
+
 #mmo-hud-party.compact {
   scale: 90%;
-  top: 50px;
-  left: 90px;
+  top: 15px;
+  left: -27px;
 }
+
 #mmo-hud-party .character-info,
 #mmo-hud-enemy-info .character-info {
   color: #d4f0f3;

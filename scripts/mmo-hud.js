@@ -63,6 +63,32 @@ Hooks.once('init', async function() {
             "fullsize": "Fullsize"
         }
     });
+
+    // Register popOut setting
+    game.settings.register("mmo-hud", "popOut", {
+        name: "Pop Out",
+        hint: "Allow the HUD to be popped out into a separate window",
+        scope: "client",
+        config: true,
+        type: Boolean,
+        default: false,
+		requiresReload: true,
+    });
+
+    game.settings.register("mmo-hud", "position", {
+        name: "MMOHUD Position",
+        hint: "The position of the MMOHUD",
+        scope: "client",
+        config: false,
+        default: {
+            left: 130,
+            top: 115,
+            width: 555,
+            height: 345,
+            scale: 1.0
+        },
+        type: Object
+    });
 });
 
 Hooks.on("ready", () => {

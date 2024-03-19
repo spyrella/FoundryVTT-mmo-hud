@@ -64,7 +64,7 @@ export default class GenericSystem {
      * @protected
      */
     _getActiveEffectTooltip(actor, effect) {
-        return effect.label + (effect.description ? `<br><hr>${effect.description}` : "");
+        return effect.name + (effect.description ? `<br><hr>${effect.description}` : "");
     }
 
     /* -------------------------------------------- */
@@ -113,7 +113,7 @@ export default class GenericSystem {
         let attribute = foundry.utils.getProperty(actor, barAttribute);
         if ( !attribute ) attribute = foundry.utils.getProperty(actor, "system." + barAttribute);
         return {
-            name: attribute.label ?? barAttribute,
+            name: attribute.name ?? barAttribute,
             value: attribute.value,
             max: attribute.max,
             temp: attribute.temp ?? 0
@@ -130,7 +130,7 @@ export default class GenericSystem {
         function _getActorTokenId(actor) {
             const activeTokens = actor.getActiveTokens();
             if ( activeTokens.length === 0 ) return null;
-            return activeTokens[0].data._id;
+            return activeTokens[0]._id;
         }
 
         let data = {
@@ -176,7 +176,7 @@ export default class GenericSystem {
      */
     translateActiveEffect(actor, effect) {
         return {
-            name: effect.label,
+            name: effect.name,
             icon: effect.icon,
             isBuff: this._isActiveEffectBuff(actor, effect),
             isDebuff: this._isActiveEffectDebuff(actor, effect),

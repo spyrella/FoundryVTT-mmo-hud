@@ -10,22 +10,26 @@ export default class MMOHUD extends Application {
         return foundry.utils.mergeObject(super.defaultOptions, {
             id: 'mmo-hud',
             template: 'modules/mmo-hud/templates/mmo-hud.html',
-            popOut: false,
+            popOut: this._getPopOutSettingValue(),
             minimizable: false,
             resizable: false,
-            top: 0,
-            left: 0,
+            width: 555,
+            height: 345,
             classes: ['mmo-hud']
         });
     }
 
     /* -------------------------------------------- */
 
-    static init() {
-        const instance = new this();
-        ui.mmoHud = instance;
-        instance.render(true);
-        console.log('MMO HUD | Initialized');
+    static async init() {
+        if (!game.mmoHudInitialized) {
+            const instance = new this();
+            ui.mmoHud = instance;
+            instance.setPosition();
+            instance.render(true);
+            console.log('MMO HUD | Initialized');
+            game.mmoHudInitialized = true;
+        }
     }
 
     /* -------------------------------------------- */
@@ -58,6 +62,58 @@ export default class MMOHUD extends Application {
 
     /* -------------------------------------------- */
 
+    /**
+     * Helper function to retrieve the value of the "popOut" setting
+     * @returns {boolean} The value of the "popOut" setting or default if not available
+     */
+    static _getPopOutSettingValue() {
+        return game.settings?.settings.has("mmo-hud.popOut") ? game.settings.get("mmo-hud", "popOut") : false;
+    }
+
+    /**
+     * Set the application position and store its new location.
+     * Returns the updated position object for the application containing the new values.
+     * @param {{ left: number; top: number; width: number; height: string | number; scale: number }} position
+     * @returns {void | { left: number; top: number; width: number; height: number; scale: number }}
+     */
+    setPosition(position = {}) {
+        if (!position.left && !position.top) {
+            // Retrieve the position from saved settings.
+            position = game.settings.get("mmo-hud", "position");
+        }
+
+        // Check if popOut setting is disabled
+        if (!this.constructor._getPopOutSettingValue()) {
+            const lastSavedPosition = game.settings.get("mmo-hud", "position");
+            // Set alternative default position
+            position.left = lastSavedPosition?.left || 130;
+            position.top = lastSavedPosition?.top || 90;
+        }
+
+        // Log position for debugging
+        // console.log("Position:", position);
+
+        // Find the mmo-hud-party element
+        let mmoHudParty = document.getElementById("mmo-hud-party");
+
+        if (mmoHudParty) {
+            // Set the position of mmo-hud-party
+            mmoHudParty.style.top = position.top + "px";
+            mmoHudParty.style.left = position.left + "px";
+        } else {
+            console.error("Child element mmo-hud-party not found.");
+        }
+
+        if (position) {
+            // Save the updated position to settings
+            game.settings.set("mmo-hud", "position", position);
+            return position;
+        } else {
+            console.error("Invalid position");
+        }
+    }
+    /* -------------------------------------------- */
+
     /** @inheritdoc */
     async _renderInner(...args) {
         await loadTemplates({
@@ -75,12 +131,12 @@ export default class MMOHUD extends Application {
         let data = await super.getData(options);
         data.hudSize = game.settings.get("mmo-hud", "size");
         data.boxClass = game.settings.get("mmo-hud", "transparentVersion") ? "rpg-title-box" : "rpg-box";
-        if ( showMode === "always" || (showMode === "combat" && game.combat) ) {
+        if (showMode === "always" || (showMode === "combat" && game.combat)) {
             data.party = this._getParty();
 
             // Calculate percentages
             data.party.forEach((member) => {
-                if ( member.primary ) {
+                if (member.primary) {
                     const tempWouldExceedMax = member.primary.value + member.primary.temp > member.primary.max;
                     const totalPrimary = tempWouldExceedMax ? (member.primary.value + (member.primary.temp ?? 0)) : member.primary.max;
                     member.primary.percent = Math.round((member.primary.value / totalPrimary) * 100);
@@ -91,7 +147,7 @@ export default class MMOHUD extends Application {
                         }
                     }
                 }
-                if ( member.secondary ) {
+                if (member.secondary) {
                     member.secondary.percent = Math.round((member.secondary.value / member.secondary.max) * 100);
                 }
             });
@@ -109,7 +165,7 @@ export default class MMOHUD extends Application {
 
         // Calculate percentages
         data.enemies.forEach((enemy) => {
-            if ( enemy.primary ) {
+            if (enemy.primary) {
                 const totalPrimary = enemy.primary.max + (enemy.primary.temp ?? 0);
                 enemy.primary.percent = Math.round((enemy.primary.value / totalPrimary) * 100);
                 if (enemy.primary.temp) {
@@ -130,10 +186,10 @@ export default class MMOHUD extends Application {
      * @private
      */
     _getPartySize(size) {
-        if ( size === 1 ) return "Solo";
-        if ( size === 2 ) return "Duo";
-        if ( size <= 4 ) return "Light Party";
-        if ( size <= 8 ) return "Full Party";
+        if (size === 1) return "Solo";
+        if (size === 2) return "Duo";
+        if (size <= 4) return "Light Party";
+        if (size <= 8) return "Full Party";
         return "Alliance";
     }
 
@@ -142,19 +198,19 @@ export default class MMOHUD extends Application {
     _getParty() {
         // All actors that are assigned to a Player
         let users = game.users;
-        if ( game.settings.get("mmo-hud", "partySetup") === "loggedin" ) {
+        if (game.settings.get("mmo-hud", "partySetup") === "loggedin") {
             users = game.users.filter(u => u.active);
         }
         let party = users.map(u => u.character).filter(c => c);
 
         // If we are in combat, additionally return all actors with disposition of Friendly
         function _isFriendly(actor) {
-            if ( actor.token ) {
+            if (actor.token) {
                 return actor.token.disposition === CONST.TOKEN_DISPOSITIONS.FRIENDLY;
             }
             else return actor.prototypeToken.disposition === CONST.TOKEN_DISPOSITIONS.FRIENDLY;
         }
-        if ( game.combat ) {
+        if (game.combat) {
             const friendlyCombatants = game.combat.combatants
                 .filter(c => _isFriendly(c.actor))
                 .map(c => c.actor);
@@ -166,7 +222,7 @@ export default class MMOHUD extends Application {
         // Translate the actor data into the format we need
         let data = party.map(a => this.systemConverter.translatePartyActor(a));
 
-        if ( game.combat ) {
+        if (game.combat) {
             data = this.systemConverter.setInitiatives(data);
         }
         return data;
@@ -248,7 +304,7 @@ export default class MMOHUD extends Application {
     /* -------------------------------------------- */
 
     _getEnemies(partyIds) {
-        if ( !canvas?.scene ) return [];
+        if (!canvas?.scene) return [];
 
         const targeted = Array.from(game.user.targets
             .filter(t => !partyIds.includes(t.document.actor._id))
@@ -315,26 +371,106 @@ export default class MMOHUD extends Application {
     /** @override */
     activateListeners(html) {
         super.activateListeners(html);
-        html.find(".rpg-nav-a").click(this._onCharacterClick.bind(this));
+        html.find(".rpg-nav-a").click(this._onCharacterTarget.bind(this));
+
+        // Listen for double click events on character portraits
+        html.find(".rpg-nav-a").on('dblclick', this._onCharacterPortraitDoubleClick.bind(this));
+
+        // Prevent closing the window when the escape key is pressed
+        $(document).keydown(event => {
+            if (event.key === 'Escape' && this.element[0].style.display !== 'none') {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+        });
     }
 
     /* -------------------------------------------- */
 
-    _onCharacterClick(event) {
+    _onCharacterTarget(event) {
         event.preventDefault();
         const actorId = event.currentTarget.dataset.documentId;
         const actor = game.actors.get(actorId);
-        if ( actor ) {
-            const activeTokenIds = actor.getActiveTokens().map(t => t.id);
-            const currentTargets = game.user.targets.ids;
-            // If id is already in the set, remove it
-            if ( game.user.targets.ids.includes(activeTokenIds[0]) ) {
+
+        if (!actor) return;
+
+        const activeTokenIds = actor.getActiveTokens().map(t => t.id);
+        const currentTargets = game.user.targets.ids;
+
+        if (event.shiftKey) {
+            // Toggle target selection with shift key
+            if (game.user.targets.ids.includes(activeTokenIds[0])) {
                 const newTargets = currentTargets.filter(id => id !== activeTokenIds[0]);
                 game.user.updateTokenTargets(newTargets);
-            }
-            else {
+            } else {
                 game.user.updateTokenTargets(currentTargets.concat(activeTokenIds));
             }
+        } else {
+            // Regular click selects the target
+            game.user.updateTokenTargets(activeTokenIds, { releaseOthers: true });
         }
+    }
+
+    _onCharacterPortraitDoubleClick(event) {
+        event.preventDefault();
+
+        // Retrieve the actor ID associated with the clicked portrait
+        const actorId = $(event.currentTarget).closest(".rpg-nav-a").data('document-id');
+
+        console.log('Actor ID:', actorId); // Debug
+
+        // If an actor ID is found, open the character sheet
+        if (actorId) {
+            const actor = game.actors.get(actorId);
+            console.log('Actor:', actor); // Debug
+
+            if (actor) {
+                actor.sheet.render(true);
+                console.log('Character sheet rendered.'); // Debug
+            } else {
+                console.error(`Actor with ID ${actorId} not found.`);
+            }
+        } else {
+            console.error("Actor ID not found.");
+        }
+    }
+}
+
+
+
+Hooks.on('getSceneControlButtons', (buttons) => {
+    if (game.user.isGM) {
+        const mmoHudControl = {
+            activeTool: "openMMOHudButton", // Assuming you have a tool with this name
+            icon: "fas fa-chart-line",
+            layer: "controls",
+            name: "openMMOHudButton",
+            title: "Open MMO HUD",
+            tools: [
+                {
+                    name: "openMMOHudButton",
+                    icon: "fas fa-chart-line",
+                    title: "Toggle MMO HUD",
+                    button: true,
+                    onClick: toggleMMOHud
+                }
+            ],
+            visible: true
+        };
+
+        buttons.push(mmoHudControl);
+    }
+});
+
+function toggleMMOHud() {
+    // Toggle the MMO HUD sheet
+    if (ui.mmoHud) {
+        if (ui.mmoHud.rendered) {
+            ui.mmoHud.close();
+        } else {
+            ui.mmoHud.render(true);
+        }
+    } else {
+        console.error("MMO HUD instance not found.");
     }
 }
