@@ -2,7 +2,7 @@
   "id": "mmo-hud",
   "title": "MMO HUD: XIV",
   "description": "Have you heard of the critically acclaimed MMO-style TTRPG HUD with an expanded amount of information which you can play through the entirety of Demon Queen Awakens and the Award Winning Demon Queen Awakens adventure for free with no restrictions on playtime?",
-  "version": "This is auto replaced",
+	"version": "#{VERSION}#",
   "library": "false",
   "manifestPlusVersion": "1.2.0",
   "compatibility": {
@@ -36,9 +36,9 @@
       "path": "languages/en.json"
     }
   ],
-  "url": "This is auto replaced",
-  "manifest": "This is auto replaced",
-  "download": "This is auto replaced",
+	"url": "#{URL}#",
+	"manifest": "#{MANIFEST}#",
+	"download": "#{DOWNLOAD}#",
   "license": "LICENSE",
   "readme": "README.md",
   "media": []
